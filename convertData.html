@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công Cụ Chuyển Đổi & Tính Toán Dữ Liệu Vận Hạn</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #2980b9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        
+        .main-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .main-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e6ed;
+        }
+        
+        .panel-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary-color);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 350px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            background: white;
+        }
+        
+        .info-box {
+            background: linear-gradient(to right, #e3f2fd, #f3e5f5);
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+        
+        .info-box strong {
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .info-box ul {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+        
+        .info-box li {
+            margin-bottom: 6px;
+            position: relative;
+        }
+        
+        .info-box li:before {
+            content: "•";
+            color: var(--secondary-color);
+            font-weight: bold;
+            position: absolute;
+            left: -15px;
+        }
+        
+        .column-mapping {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .column-input {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .column-input label {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .column-input label i {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+        
+        .column-input input {
+            padding: 10px 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .column-input input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+            background: white;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 25px 0;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+        
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(to right, #f8f9fa, #f1f8ff);
+            border-radius: 10px;
+            border: 1px solid #e0e6ed;
+        }
+        
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e6ed;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .result-section {
+            margin-top: 30px;
+        }
+        
+        .json-output {
+            background: #282c34;
+            color: #abb2bf;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            max-height: 400px;
+            border: 1px solid #1c1f26;
+        }
+        
+        .preview-table {
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid #e0e6ed;
+            border-radius: 8px;
+        }
+        
+        .preview-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .preview-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .preview-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eee;
+            border-right: 1px solid #eee;
+        }
+        
+        .preview-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .preview-table tr:hover {
+            background-color: #f0f7ff;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+            display: none;
+            z-index: 1000;
+            max-width: 400px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        .notification-success {
+            background: var(--success-color);
+            border-left: 4px solid #1e7e34;
+        }
+        
+        .notification-error {
+            background: var(--danger-color);
+            border-left: 4px solid #b71c1c;
+        }
+        
+        .notification-warning {
+            background: var(--warning-color);
+            border-left: 4px solid #e65100;
+        }
+        
+        .formatted-data {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #e0e6ed;
+        }
+        
+        .formatted-data h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .panel {
+                padding: 20px;
+            }
+            
+            .column-mapping {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .notification {
+                left: 10px;
+                right: 10px;
+                max-width: none;
+            }
+        }
+        
+        .toggle-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+        
+        .toggle-btn:hover {
+            background: #5a6268;
+        }
+        
+        .calculation-info {
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            border-left: 4px solid #4caf50;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .calculation-info h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-exchange-alt"></i> Công Cụ Chuyển Đổi & Tính Toán Dữ Liệu Vận Hạn</h1>
+            <p class="subtitle">Chuyển đổi từ Excel/CSV sang JSON và tính toán tự động các ngày trước/đây</p>
+        </header>
+        
+        <div class="main-wrapper">
+            <!-- Bên trái: Input và mapping -->
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-upload"></i> Dữ Liệu Đầu Vào</h2>
+                
+                <div class="info-box">
+                    <strong><i class="fas fa-info-circle"></i> Hướng dẫn nhập liệu:</strong>
+                    <ul>
+                        <li>Copy toàn bộ bảng từ Excel (Ctrl+A, Ctrl+C)</li>
+                        <li>Dán vào ô bên dưới (Ctrl+V)</li>
+                        <li>Dữ liệu sẽ tự động phân tích dựa trên dấu tab</li>
+                        <li>Hàng đầu tiên sẽ tự động nhận diện làm tiêu đề</li>
+                    </ul>
+                </div>
+                
+                <textarea id="inputData" placeholder="Dán dữ liệu bảng tại đây... (Định dạng tab-delimited)">
+TT Ngày Sinh	Ngày Vận Hạn	TT Ngày VH	Âm Lịch	Dương Lịch	Giờ	Số TT	Tên	Triệu chứng	Ăn Đông	Ăn Tây	Tây Y	Dưỡng sinh	Món ăn gia vị	Hôm trước
+25993	22/03/2025	45736	22/2/2025	22/03/2025	06:49	409	NAM	Hoa mắt, chóng mặt						
+25993	27/6/2025	45833	2/6/2025	27/6/2025	13:28	808	NAM	Dương bất thường						
+25993	28/6/2025	45834	3/6/2025	28/6/2025	16:35	995	NAM	Tim đập mạnh / nhịp yếu						
+25993	15/7/2025	45851	20/6/2025	15/7/2025	08:15	1200	NAM	Mệt mỏi, đau đầu						
+25993	22/8/2025	45889	28/7/2025	22/8/2025	14:45	1500	NAM	Chóng mặt, buồn nôn						
+25993	10/9/2025	45908	15/8/2025	10/9/2025	10:30	1800	NAM	Đau ngực, khó thở						
+25993	25/10/2025	45953	1/10/2025	25/10/2025	09:20	2100	NAM	Sốt, ho						
+25993	15/11/2025	45974	22/10/2025	15/11/2025	16:10	2400	NAM	Đau bụng, tiêu chảy						
+25993	05/12/2025	45994	12/11/2025	05/12/2025	11:55	2700	NAM	Mất ngủ, lo âu						
+25993	25/12/2025	46014	2/12/2025	25/12/2025	13:40	3000	NAM	Đau lưng, mỏi vai gáy						
+                </textarea>
+                
+                <div class="stats-bar" id="inputStats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="rowCount">0</div>
+                        <div class="stat-label">Dòng dữ liệu</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="colCount">0</div>
+                        <div class="stat-label">Số cột</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="dataCount">0</div>
+                        <div class="stat-label">Bản ghi hợp lệ</div>
+                    </div>
+                </div>
+                
+                <h3 class="panel-title" style="font-size: 1.2rem; margin-top: 20px;">
+                    <i class="fas fa-map"></i> Ánh Xạ Cột Dữ Liệu
+                </h3>
+                
+                <div class="column-mapping">
+                    <div class="column-input">
+                        <label for="colBirth"><i class="fas fa-birthday-cake"></i> TT Ngày Sinh:</label>
+                        <input type="number" id="colBirth" value="1" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colEvent"><i class="fas fa-calendar-day"></i> Ngày Vận Hạn:</label>
+                        <input type="number" id="colEvent" value="2" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colTTVH"><i class="fas fa-sort-numeric-down"></i> TT Ngày VH:</label>
+                        <input type="number" id="colTTVH" value="3" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colLunar"><i class="fas fa-moon"></i> Âm Lịch:</label>
+                        <input type="number" id="colLunar" value="4" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colSolar"><i class="fas fa-sun"></i> Dương Lịch:</label>
+                        <input type="number" id="colSolar" value="5" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colTime"><i class="fas fa-clock"></i> Giờ:</label>
+                        <input type="number" id="colTime" value="6" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colSeq"><i class="fas fa-hashtag"></i> Số TT:</label>
+                        <input type="number" id="colSeq" value="7" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colName"><i class="fas fa-user"></i> Tên:</label>
+                        <input type="number" id="colName" value="8" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colSymptom"><i class="fas fa-heartbeat"></i> Triệu chứng:</label>
+                        <input type="number" id="colSymptom" value="9" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colEatEast"><i class="fas fa-utensils"></i> Ăn Đông:</label>
+                        <input type="number" id="colEatEast" value="10" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colEatWest"><i class="fas fa-utensils"></i> Ăn Tây:</label>
+                        <input type="number" id="colEatWest" value="11" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colWestern"><i class="fas fa-pills"></i> Tây Y:</label>
+                        <input type="number" id="colWestern" value="12" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colHealth"><i class="fas fa-spa"></i> Dưỡng sinh:</label>
+                        <input type="number" id="colHealth" value="13" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colFood"><i class="fas fa-pepper-hot"></i> Món ăn gia vị:</label>
+                        <input type="number" id="colFood" value="14" min="1" max="50">
+                    </div>
+                    
+                    <div class="column-input">
+                        <label for="colPrevious"><i class="fas fa-history"></i> Hôm trước:</label>
+                        <input type="number" id="colPrevious" value="15" min="1" max="50">
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="detectColumns()">
+                        <i class="fas fa-search"></i> Tự động nhận diện
+                    </button>
+                    <button class="btn btn-success" onclick="convertAndCalculate()">
+                        <i class="fas fa-calculator"></i> Chuyển đổi & Tính toán
+                    </button>
+                    <button class="btn btn-warning" onclick="showPreview()">
+                        <i class="fas fa-eye"></i> Xem trước
+                    </button>
+                    <button class="btn btn-danger" onclick="resetForm()">
+                        <i class="fas fa-redo"></i> Đặt lại
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Bên phải: Output và kết quả -->
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-code"></i> Kết Quả JSON</h2>
+                
+                <div class="info-box">
+                    <strong><i class="fas fa-lightbulb"></i> Thông tin kết quả:</strong>
+                    <p>Dữ liệu đã được chuyển đổi sang JSON và tính toán tự động các ngày trước/đây, sắp tới.</p>
+                </div>
+                
+                <div class="stats-bar" id="outputStats" style="display: none;">
+                    <div class="stat-item">
+                        <div class="stat-value" id="jsonCount">0</div>
+                        <div class="stat-label">Bản ghi JSON</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="jsonSize">0 KB</div>
+                        <div class="stat-label">Kích thước</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="calcCount">0</div>
+                        <div class="stat-label">Đã tính toán</div>
+                    </div>
+                </div>
+                
+                <div class="json-output" id="jsonOutput">
+                    // Kết quả JSON sẽ hiển thị ở đây...
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="copyJSON()">
+                        <i class="fas fa-copy"></i> Copy JSON
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadJSON()">
+                        <i class="fas fa-download"></i> Tải file JSON
+                    </button>
+                    <button class="btn btn-warning" onclick="downloadCSV()">
+                        <i class="fas fa-file-csv"></i> Tải file CSV
+                    </button>
+                    <button class="btn btn-danger" onclick="clearOutput()">
+                        <i class="fas fa-trash"></i> Xóa kết quả
+                    </button>
+                </div>
+                
+                <div class="formatted-data" id="formattedData" style="display: none;">
+                    <h4><i class="fas fa-table"></i> Dữ liệu đã định dạng:</h4>
+                    <div id="formattedTable"></div>
+                </div>
+                
+                <div class="calculation-info" id="calculationInfo" style="display: none;">
+                    <h4><i class="fas fa-calculator"></i> Thông tin tính toán:</h4>
+                    <p id="calcDetails">Đang tính toán dữ liệu...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preview section -->
+        <div class="panel" id="previewPanel" style="display: none;">
+            <h2 class="panel-title"><i class="fas fa-table"></i> Xem Trước Dữ Liệu</h2>
+            <div class="preview-table" id="previewTable"></div>
+        </div>
+        
+        <!-- Notification -->
+        <div class="notification" id="notification">
+            <span id="notificationMessage"></span>
+        </div>
+    </div>
+
+    <script>
+        // Biến toàn cục
+        let convertedData = [];
+        let calculationResults = [];
+        
+        // Khởi tạo
+        document.addEventListener('DOMContentLoaded', function() {
+            updateInputStats();
+            
+            // Auto update stats khi input thay đổi
+            document.getElementById('inputData').addEventListener('input', function() {
+                updateInputStats();
+                autoDetectColumns();
+            });
+            
+            // Load dữ liệu mẫu
+            loadSampleData();
+        });
+        
+        function loadSampleData() {
+            // Dữ liệu mẫu đã có sẵn trong textarea
+            updateInputStats();
+            autoDetectColumns();
+        }
+        
+        function updateInputStats() {
+            const input = document.getElementById('inputData').value.trim();
+            const lines = input.split('\n').filter(line => line.trim());
+            
+            const rowCount = lines.length;
+            let colCount = 0;
+            let dataCount = 0;
+            
+            if (lines.length > 0) {
+                // Đếm số cột từ dòng đầu tiên
+                colCount = lines[0].split('\t').length;
+                
+                // Đếm số dòng dữ liệu (bỏ qua header nếu có)
+                const hasHeader = isHeaderRow(lines[0]);
+                dataCount = hasHeader ? lines.length - 1 : lines.length;
+            }
+            
+            document.getElementById('rowCount').textContent = rowCount;
+            document.getElementById('colCount').textContent = colCount;
+            document.getElementById('dataCount').textContent = dataCount;
+        }
+        
+        function autoDetectColumns() {
+            const input = document.getElementById('inputData').value;
+            const lines = input.split('\n').filter(line => line.trim());
+            
+            if (lines.length === 0) return;
+            
+            const firstLine = lines[0];
+            const columns = firstLine.split('\t');
+            
+            // Kiểm tra xem dòng đầu có phải header không
+            if (!isHeaderRow(firstLine)) {
+                showNotification('Dữ liệu không có tiêu đề rõ ràng. Vui lòng kiểm tra lại.', 'warning');
+                return;
+            }
+            
+            // Map các cột dựa trên nội dung tiêu đề
+            columns.forEach((col, index) => {
+                const colText = col.toLowerCase().trim();
+                const colIndex = index + 1;
+                
+                if (colText.includes('tt') && colText.includes('sinh')) {
+                    document.getElementById('colBirth').value = colIndex;
+                }
+                else if (colText.includes('vận') || colText.includes('hạn')) {
+                    document.getElementById('colEvent').value = colIndex;
+                }
+                else if (colText.includes('tt') && colText.includes('vh')) {
+                    document.getElementById('colTTVH').value = colIndex;
+                }
+                else if (colText.includes('âm') || colText.includes('lịch')) {
+                    document.getElementById('colLunar').value = colIndex;
+                }
+                else if (colText.includes('dương') || colText.includes('dương lịch')) {
+                    document.getElementById('colSolar').value = colIndex;
+                }
+                else if (colText.includes('giờ')) {
+                    document.getElementById('colTime').value = colIndex;
+                }
+                else if (colText.includes('số') && colText.includes('tt')) {
+                    document.getElementById('colSeq').value = colIndex;
+                }
+                else if (colText.includes('tên')) {
+                    document.getElementById('colName').value = colIndex;
+                }
+                else if (colText.includes('triệu') || colText.includes('chứng')) {
+                    document.getElementById('colSymptom').value = colIndex;
+                }
+                else if (colText.includes('ăn') && colText.includes('đông')) {
+                    document.getElementById('colEatEast').value = colIndex;
+                }
+                else if (colText.includes('ăn') && colText.includes('tây')) {
+                    document.getElementById('colEatWest').value = colIndex;
+                }
+                else if (colText.includes('tây y')) {
+                    document.getElementById('colWestern').value = colIndex;
+                }
+                else if (colText.includes('dưỡng') || colText.includes('sinh')) {
+                    document.getElementById('colHealth').value = colIndex;
+                }
+                else if (colText.includes('món') || colText.includes('gia vị')) {
+                    document.getElementById('colFood').value = colIndex;
+                }
+                else if (colText.includes('hôm') || colText.includes('trước')) {
+                    document.getElementById('colPrevious').value = colIndex;
+                }
+            });
+        }
+        
+        function detectColumns() {
+            autoDetectColumns();
+            showNotification('Đã tự động nhận diện các cột dữ liệu!', 'success');
+        }
+        
+        function isHeaderRow(line) {
+            const columns = line.split('\t');
+            if (columns.length === 0) return false;
+            
+            const firstCol = columns[0].toLowerCase();
+            const secondCol = columns[1] ? columns[1].toLowerCase() : '';
+            
+            // Kiểm tra các từ khóa thường gặp trong header
+            const headerKeywords = [
+                'stt', 'tt', 'ngày', 'tên', 'giờ', 'số',
+                'birth', 'date', 'name', 'time', 'sequence',
+                'triệu', 'chứng', 'âm', 'lịch', 'dương'
+            ];
+            
+            return headerKeywords.some(keyword => 
+                firstCol.includes(keyword) || secondCol.includes(keyword)
+            );
+        }
+        
+        function convertAndCalculate() {
+            const input = document.getElementById('inputData').value.trim();
+            if (!input) {
+                showNotification('Vui lòng nhập dữ liệu trước!', 'error');
+                return;
+            }
+            
+            // Lấy cấu hình mapping
+            const mapping = {
+                birth: parseInt(document.getElementById('colBirth').value) - 1,
+                event: parseInt(document.getElementById('colEvent').value) - 1,
+                ttvh: parseInt(document.getElementById('colTTVH').value) - 1,
+                lunar: parseInt(document.getElementById('colLunar').value) - 1,
+                solar: parseInt(document.getElementById('colSolar').value) - 1,
+                time: parseInt(document.getElementById('colTime').value) - 1,
+                seq: parseInt(document.getElementById('colSeq').value) - 1,
+                name: parseInt(document.getElementById('colName').value) - 1,
+                symptom: parseInt(document.getElementById('colSymptom').value) - 1,
+                eatEast: parseInt(document.getElementById('colEatEast').value) - 1,
+                eatWest: parseInt(document.getElementById('colEatWest').value) - 1,
+                western: parseInt(document.getElementById('colWestern').value) - 1,
+                health: parseInt(document.getElementById('colHealth').value) - 1,
+                food: parseInt(document.getElementById('colFood').value) - 1,
+                previous: parseInt(document.getElementById('colPrevious').value) - 1
+            };
+            
+            // Parse dữ liệu
+            const lines = input.split('\n').filter(line => line.trim());
+            const hasHeader = isHeaderRow(lines[0]);
+            const startIndex = hasHeader ? 1 : 0;
+            
+            convertedData = [];
+            calculationResults = [];
+            
+            let validCount = 0;
+            let errorCount = 0;
+            
+            for (let i = startIndex; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const columns = line.split('\t');
+                
+                try {
+                    const item = {
+                        id: i + 1,
+                        ttNgaySinh: getColumnValue(columns, mapping.birth),
+                        ngayVanHan: getColumnValue(columns, mapping.event),
+                        ttNgayVH: getColumnValue(columns, mapping.ttvh),
+                        amLich: getColumnValue(columns, mapping.lunar),
+                        duongLich: getColumnValue(columns, mapping.solar),
+                        gio: getColumnValue(columns, mapping.time),
+                        soTT: parseInt(getColumnValue(columns, mapping.seq)) || 0,
+                        ten: getColumnValue(columns, mapping.name),
+                        trieuChung: getColumnValue(columns, mapping.symptom),
+                        anDong: getColumnValue(columns, mapping.eatEast),
+                        anTay: getColumnValue(columns, mapping.eatWest),
+                        tayY: getColumnValue(columns, mapping.western),
+                        duongSinh: getColumnValue(columns, mapping.health),
+                        monAnGiaVi: getColumnValue(columns, mapping.food),
+                        homTruoc: getColumnValue(columns, mapping.previous),
+                        // Các trường tính toán sẽ được thêm sau
+                        season: '',
+                        thutuNgay: 0,
+                        thutuGio: 0,
+                        truocDayNgay: '',
+                        truocDayGio: '',
+                        sapToiNgay: '',
+                        sapToiGio: '',
+                        conNgay: 0,
+                        conGio: 0,
+                        trangThai: ''
+                    };
+                    
+                    // Validate dữ liệu
+                    if (validateData(item)) {
+                        // Thêm mùa
+                        item.season = getSeason(item.ngayVanHan);
+                        
+                        // Tính toán
+                        calculateDates(item);
+                        
+                        convertedData.push(item);
+                        calculationResults.push(item);
+                        validCount++;
+                    } else {
+                        errorCount++;
+                    }
+                } catch (error) {
+                    errorCount++;
+                    console.error(`Lỗi ở dòng ${i + 1}:`, error);
+                }
+            }
+            
+            // Hiển thị kết quả
+            displayResults(validCount, errorCount);
+            
+            // Cập nhật thống kê
+            updateOutputStats(validCount);
+            
+            // Hiển thị thông tin tính toán
+            showCalculationInfo(validCount);
+        }
+        
+        function getColumnValue(columns, index) {
+            return columns[index] ? columns[index].trim() : '';
+        }
+        
+        function validateData(item) {
+            // Kiểm tra các trường bắt buộc
+            if (!item.ngayVanHan || !item.ten) {
+                return false;
+            }
+            
+            // Kiểm tra format ngày
+            if (!isValidDate(item.ngayVanHan)) {
+                return false;
+            }
+            
+            // Kiểm tra số TT
+            if (isNaN(item.soTT) || item.soTT < 0) {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function isValidDate(dateStr) {
+            // Kiểm tra format dd/mm/yyyy hoặc dd-mm-yyyy
+            const regex = /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/;
+            return regex.test(dateStr);
+        }
+        
+        function getSeason(dateStr) {
+            if (!dateStr) return "Xuân";
+            
+            try {
+                const parts = dateStr.split(/[\/\-]/);
+                if (parts.length !== 3) return "Xuân";
+                
+                const month = parseInt(parts[1]);
+                if (isNaN(month)) return "Xuân";
+                
+                if (month >= 1 && month <= 3) return "Xuân";
+                else if (month >= 4 && month <= 6) return "Hạ";
+                else if (month >= 7 && month <= 9) return "Thu";
+                else return "Đông";
+            } catch (error) {
+                return "Xuân";
+            }
+        }
+        
+        function calculateDates(item) {
+            // Tính thứ tự ngày Julie (từ 01/01/1900)
+            item.thutuNgay = calculateJulianDay(item.ngayVanHan);
+            
+            // Tính thứ tự giờ (phút từ 00:00)
+            item.thutuGio = calculateMinuteOfDay(item.gio);
+            
+            // Tính ngày trước đây (ngày vận hạn - số TT)
+            const truocDayDate = subtractDays(item.ngayVanHan, item.soTT);
+            item.truocDayNgay = formatDate(truocDayDate);
+            
+            // Tính giờ trước đây (giờ - 2*số TT phút)
+            const truocDayTime = subtractMinutes(item.gio, item.soTT * 2);
+            item.truocDayGio = truocDayTime;
+            
+            // Tính ngày sắp tới (ngày vận hạn + số TT)
+            const sapToiDate = addDays(item.ngayVanHan, item.soTT);
+            item.sapToiNgay = formatDate(sapToiDate);
+            
+            // Tính giờ sắp tới (giờ + 2*số TT phút)
+            const sapToiTime = addMinutes(item.gio, item.soTT * 2);
+            item.sapToiGio = sapToiTime;
+            
+            // Tính số ngày còn lại từ hiện tại
+            const today = new Date();
+            const eventDate = parseDate(item.ngayVanHan);
+            const diffTime = eventDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            item.conNgay = diffDays > 0 ? diffDays : 0;
+            item.conGio = diffDays > 0 ? diffDays * 24 : 0;
+            
+            // Xác định trạng thái
+            if (diffDays < 0) {
+                item.trangThai = "Đã qua";
+            } else if (diffDays <= 3) {
+                item.trangThai = "Nguy hiểm";
+            } else if (diffDays <= 7) {
+                item.trangThai = "Cảnh báo";
+            } else {
+                item.trangThai = "An toàn";
+            }
+        }
+        
+        function calculateJulianDay(dateStr) {
+            // Tính số ngày từ 01/01/1900
+            const date = parseDate(dateStr);
+            const baseDate = new Date(1900, 0, 1);
+            const diffTime = date - baseDate;
+            return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        }
+        
+        function calculateMinuteOfDay(timeStr) {
+            if (!timeStr) return 0;
+            
+            const parts = timeStr.split(':');
+            if (parts.length !== 2) return 0;
+            
+            const hours = parseInt(parts[0]) || 0;
+            const minutes = parseInt(parts[1]) || 0;
+            
+            return hours * 60 + minutes;
+        }
+        
+        function parseDate(dateStr) {
+            const parts = dateStr.split(/[\/\-]/);
+            if (parts.length !== 3) return new Date();
+            
+            const day = parseInt(parts[0]);
+            const month = parseInt(parts[1]) - 1;
+            const year = parseInt(parts[2]);
+            
+            return new Date(year, month, day);
+        }
+        
+        function formatDate(date) {
+            if (!(date instanceof Date) || isNaN(date)) return '';
+            
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            
+            return `${day}/${month}/${year}`;
+        }
+        
+        function subtractDays(dateStr, days) {
+            const date = parseDate(dateStr);
+            date.setDate(date.getDate() - days);
+            return date;
+        }
+        
+        function addDays(dateStr, days) {
+            const date = parseDate(dateStr);
+            date.setDate(date.getDate() + days);
+            return date;
+        }
+        
+        function subtractMinutes(timeStr, minutes) {
+            if (!timeStr) return '';
+            
+            const [hours, mins] = timeStr.split(':').map(Number);
+            let totalMinutes = hours * 60 + mins - minutes;
+            
+            // Xử lý tràn ngày
+            while (totalMinutes < 0) {
+                totalMinutes += 24 * 60;
+            }
+            
+            const newHours = Math.floor(totalMinutes / 60) % 24;
+            const newMinutes = totalMinutes % 60;
+            
+            return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
+        }
+        
+        function addMinutes(timeStr, minutes) {
+            if (!timeStr) return '';
+            
+            const [hours, mins] = timeStr.split(':').map(Number);
+            let totalMinutes = hours * 60 + mins + minutes;
+            
+            // Xử lý tràn ngày
+            const newHours = Math.floor(totalMinutes / 60) % 24;
+            const newMinutes = totalMinutes % 60;
+            
+            return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
+        }
+        
+        function displayResults(validCount, errorCount) {
+            // Tạo JSON output
+            const jsonOutput = {
+                metadata: {
+                    totalRecords: validCount,
+                    convertedAt: new Date().toISOString(),
+                    errors: errorCount,
+                    calculationPerformed: true
+                },
+                data: convertedData
+            };
+            
+            const jsonStr = JSON.stringify(jsonOutput, null, 2);
+            document.getElementById('jsonOutput').textContent = jsonStr;
+            document.getElementById('outputStats').style.display = 'flex';
+            
+            // Hiển thị formatted data
+            showFormattedData();
+            
+            // Thông báo
+            const message = `Đã chuyển đổi thành công ${validCount} bản ghi`;
+            const details = errorCount > 0 ? ` (${errorCount} dòng lỗi)` : '';
+            showNotification(message + details, 'success');
+        }
+        
+        function updateOutputStats(recordCount) {
+            const jsonStr = document.getElementById('jsonOutput').textContent;
+            const sizeInKB = (new Blob([jsonStr]).size / 1024).toFixed(2);
+            
+            document.getElementById('jsonCount').textContent = recordCount;
+            document.getElementById('jsonSize').textContent = `${sizeInKB} KB`;
+            document.getElementById('calcCount').textContent = recordCount;
+        }
+        
+        function showFormattedData() {
+            if (convertedData.length === 0) return;
+            
+            const tableDiv = document.getElementById('formattedTable');
+            let html = `
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <thead>
+                            <tr style="background-color: #2c3e50; color: white;">
+                                <th style="padding: 8px; border: 1px solid #ddd;">TT</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Tên</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Ngày VH</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Giờ</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Số TT</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Trước đây</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Sắp tới</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Còn ngày</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            convertedData.slice(0, 10).forEach((item, index) => {
+                html += `
+                    <tr style="${index % 2 === 0 ? 'background-color: white;' : 'background-color: #f9f9f9;'}">
+                        <td style="padding: 8px; border: 1px solid #ddd;">${item.id}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${item.ten}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${item.ngayVanHan}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${item.gio}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${item.soTT}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${item.truocDayNgay}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${item.sapToiNgay}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${item.conNgay}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${item.trangThai}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            if (convertedData.length > 10) {
+                html += `<p style="margin-top: 10px; color: #666; font-size: 12px;">Hiển thị 10/${convertedData.length} bản ghi đầu tiên</p>`;
+            }
+            
+            tableDiv.innerHTML = html;
+            document.getElementById('formattedData').style.display = 'block';
+        }
+        
+        function showCalculationInfo(recordCount) {
+            const infoDiv = document.getElementById('calculationInfo');
+            const detailsP = document.getElementById('calcDetails');
+            
+            if (recordCount === 0) {
+                infoDiv.style.display = 'none';
+                return;
+            }
+            
+            // Tính toán thống kê
+            const dangerCount = convertedData.filter(item => item.trangThai === 'Nguy hiểm').length;
+            const warningCount = convertedData.filter(item => item.trangThai === 'Cảnh báo').length;
+            const safeCount = convertedData.filter(item => item.trangThai === 'An toàn').length;
+            const passedCount = convertedData.filter(item => item.trangThai === 'Đã qua').length;
+            
+            const details = `
+                Đã tính toán tự động cho ${recordCount} bản ghi:<br>
+                • Nguy hiểm (≤3 ngày): ${dangerCount} bản ghi<br>
+                • Cảnh báo (4-7 ngày): ${warningCount} bản ghi<br>
+                • An toàn (>7 ngày): ${safeCount} bản ghi<br>
+                • Đã qua: ${passedCount} bản ghi
+            `;
+            
+            detailsP.innerHTML = details;
+            infoDiv.style.display = 'block';
+        }
+        
+        function showPreview() {
+            const input = document.getElementById('inputData').value.trim();
+            if (!input) {
+                showNotification('Không có dữ liệu để xem trước!', 'error');
+                return;
+            }
+            
+            const lines = input.split('\n').filter(line => line.trim());
+            const hasHeader = isHeaderRow(lines[0]);
+            const startIndex = hasHeader ? 0 : 0; // Luôn hiển thị từ dòng đầu
+            
+            const previewDiv = document.getElementById('previewTable');
+            let html = '<table>';
+            
+            // Hiển thị tối đa 15 dòng
+            const displayCount = Math.min(lines.length, 15);
+            
+            for (let i = startIndex; i < displayCount; i++) {
+                const line = lines[i];
+                const columns = line.split('\t');
+                
+                html += '<tr>';
+                columns.forEach((col, colIndex) => {
+                    if (i === startIndex && hasHeader) {
+                        html += `<th>${col}</th>`;
+                    } else {
+                        html += `<td>${col}</td>`;
+                    }
+                });
+                html += '</tr>';
+            }
+            
+            html += '</table>';
+            
+            if (lines.length > displayCount) {
+                html += `<p style="margin-top: 10px; color: #666;">Hiển thị ${displayCount}/${lines.length} dòng đầu tiên</p>`;
+            }
+            
+            previewDiv.innerHTML = html;
+            document.getElementById('previewPanel').style.display = 'block';
+            
+            showNotification(`Đang hiển thị ${displayCount} dòng dữ liệu`, 'success');
+        }
+        
+        function copyJSON() {
+            const jsonText = document.getElementById('jsonOutput').textContent;
+            if (!jsonText || jsonText.includes('Kết quả JSON sẽ hiển thị ở đây')) {
+                showNotification('Không có dữ liệu để copy!', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(jsonText)
+                .then(() => {
+                    showNotification('Đã copy JSON vào clipboard!', 'success');
+                })
+                .catch(err => {
+                    // Fallback cho trình duyệt cũ
+                    const textArea = document.createElement('textarea');
+                    textArea.value = jsonText;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('Đã copy JSON vào clipboard!', 'success');
+                });
+        }
+        
+        function downloadJSON() {
+            const jsonText = document.getElementById('jsonOutput').textContent;
+            if (!jsonText || jsonText.includes('Kết quả JSON sẽ hiển thị ở đây')) {
+                showNotification('Không có dữ liệu để tải!', 'error');
+                return;
+            }
+            
+            const blob = new Blob([jsonText], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vanhan_data_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Đã tải file JSON thành công!', 'success');
+        }
+        
+        function downloadCSV() {
+            if (convertedData.length === 0) {
+                showNotification('Không có dữ liệu để tải!', 'error');
+                return;
+            }
+            
+            // Tạo CSV từ convertedData
+            const headers = [
+                'ID', 'TT Ngày Sinh', 'Ngày Vận Hạn', 'TT Ngày VH', 'Âm Lịch',
+                'Dương Lịch', 'Giờ', 'Số TT', 'Tên', 'Triệu chứng',
+                'Ăn Đông', 'Ăn Tây', 'Tây Y', 'Dưỡng sinh', 'Món ăn gia vị',
+                'Hôm trước', 'Mùa', 'Thứ tự ngày', 'Thứ tự giờ',
+                'Trước đây (Ngày)', 'Trước đây (Giờ)', 'Sắp tới (Ngày)', 
+                'Sắp tới (Giờ)', 'Còn ngày', 'Còn giờ', 'Trạng thái'
+            ];
+            
+            let csv = headers.join(',') + '\n';
+            
+            convertedData.forEach(item => {
+                const row = [
+                    item.id,
+                    `"${item.ttNgaySinh}"`,
+                    `"${item.ngayVanHan}"`,
+                    `"${item.ttNgayVH}"`,
+                    `"${item.amLich}"`,
+                    `"${item.duongLich}"`,
+                    `"${item.gio}"`,
+                    item.soTT,
+                    `"${item.ten}"`,
+                    `"${item.trieuChung}"`,
+                    `"${item.anDong}"`,
+                    `"${item.anTay}"`,
+                    `"${item.tayY}"`,
+                    `"${item.duongSinh}"`,
+                    `"${item.monAnGiaVi}"`,
+                    `"${item.homTruoc}"`,
+                    `"${item.season}"`,
+                    item.thutuNgay,
+                    item.thutuGio,
+                    `"${item.truocDayNgay}"`,
+                    `"${item.truocDayGio}"`,
+                    `"${item.sapToiNgay}"`,
+                    `"${item.sapToiGio}"`,
+                    item.conNgay,
+                    item.conGio,
+                    `"${item.trangThai}"`
+                ];
+                
+                csv += row.join(',') + '\n';
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vanhan_calculated_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Đã tải file CSV thành công!', 'success');
+        }
+        
+        function resetForm() {
+            if (confirm('Bạn có chắc muốn đặt lại toàn bộ form? Dữ liệu chưa lưu sẽ bị mất.')) {
+                document.getElementById('inputData').value = '';
+                clearOutput();
+                updateInputStats();
+                
+                // Reset mapping về mặc định
+                const defaultMapping = {
+                    colBirth: 1, colEvent: 2, colTTVH: 3, colLunar: 4,
+                    colSolar: 5, colTime: 6, colSeq: 7, colName: 8,
+                    colSymptom: 9, colEatEast: 10, colEatWest: 11,
+                    colWestern: 12, colHealth: 13, colFood: 14, colPrevious: 15
+                };
+                
+                Object.keys(defaultMapping).forEach(id => {
+                    document.getElementById(id).value = defaultMapping[id];
+                });
+                
+                convertedData = [];
+                calculationResults = [];
+                
+                showNotification('Đã đặt lại form thành công!', 'success');
+            }
+        }
+        
+        function clearOutput() {
+            document.getElementById('jsonOutput').textContent = '// Kết quả JSON sẽ hiển thị ở đây...';
+            document.getElementById('outputStats').style.display = 'none';
+            document.getElementById('formattedData').style.display = 'none';
+            document.getElementById('calculationInfo').style.display = 'none';
+            document.getElementById('previewPanel').style.display = 'none';
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            const messageSpan = document.getElementById('notificationMessage');
+            
+            // Set message and type
+            messageSpan.textContent = message;
+            notification.className = 'notification';
+            notification.classList.add(`notification-${type}`);
+            
+            // Show notification
+            notification.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                    notification.style.animation = '';
+                }, 300);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
