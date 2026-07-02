@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Của Nam</title>
+    <style>
+        body{font-family:sans-serif; padding:30px; background:#f4f4f9;}
+        .container{max-width:800px; margin:auto;}
+        #search{width:100%; padding:15px; font-size:18px; border:2px solid #007bff; border-radius:10px; margin-bottom:20px;}
+        .link-item{display:block; padding:15px; background:white; margin-bottom:10px; border-radius:8px; text-decoration:none; color:#333; border-left:6px solid #007bff; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+        .link-item:hover{background:#e8f0fe;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 CHỌN DỰ ÁN</h1>
+        <input type="text" id="search" placeholder="🔍 Gõ tên dự án..." onkeyup="filter()">
+        <div id="list">
+            <a href="file:///D:/QUAN_LY_DU_AN/Dashboard.html" class="link-item" target="_blank">Dashboard</a>
+            <a href="file:///D:/HTML/github_data/127-gio-i-xe-boi-bay-em.html" class="link-item" target="_blank">127-gio-i-xe-boi-bay-em</a>
+            <a href="file:///D:/HTML/github_data/128-gio-i-xe-boi-bay-toi.html" class="link-item" target="_blank">128-gio-i-xe-boi-bay-toi</a>
+            <a href="file:///D:/HTML/github_data/129-gio-i-xe-boi-bay-trua.html" class="link-item" target="_blank">129-gio-i-xe-boi-bay-trua</a>
+            <a href="file:///D:/HTML/github_data/130-gio-i-xe-boi-bay-chieu.html" class="link-item" target="_blank">130-gio-i-xe-boi-bay-chieu</a>
+            <a href="file:///D:/HTML/github_data/131-gio-i-xe-boi-bay-sang.html" class="link-item" target="_blank">131-gio-i-xe-boi-bay-sang</a>
+            <a href="file:///D:/HTML/github_data/030-thuc-on-cho-phi-cong.html" class="link-item" target="_blank">030-thuc-on-cho-phi-cong</a>
+            <a href="file:///D:/HTML/github_data/032-thuc-on-lai-tau-cano.html" class="link-item" target="_blank">032-thuc-on-lai-tau-cano</a>
+            <a href="file:///D:/HTML/github_data/033-thuc-on-cho-lai-xe-o-to.html" class="link-item" target="_blank">033-thuc-on-cho-lai-xe-o-to</a>
+            <a href="file:///D:/HTML/github_data/034-thuc-on-xem-chieu.html" class="link-item" target="_blank">034-thuc-on-xem-chieu</a>
+            <a href="file:///D:/HTML/github_data/025-thuc-on-i-linh.html" class="link-item" target="_blank">025-thuc-on-i-linh</a>
+            <a href="file:///D:/HTML_PhanLoai/5_BatQuai_CacLucLuong/031-thuc-on-xe-may.html" class="link-item" target="_blank">031-thuc-on-xe-may</a>
+            <a href="file:///D:/HTML_PhanLoai/5_BatQuai_CacLucLuong/029-thuc-on-cho-oi-truong.html" class="link-item" target="_blank">029-thuc-on-cho-oi-truong</a>
+            <a href="file:///D:/HTML_PhanLoai/4_NgayThangAmLich_GioLeTet/xem ngay hoang dao.html" class="link-item" target="_blank">xem ngay hoang dao</a>
+            <a href="file:///D:/HTML_PhanLoai/4_NgayThangAmLich_GioLeTet/DO THI CUOC DOI THANG.html" class="link-item" target="_blank">DO THI CUOC DOI THANG</a>
+            <a href="file:///D:/HTML_PhanLoai/4_NgayThangAmLich_GioLeTet/index.html" class="link-item" target="_blank">index</a>
+            <a href="file:///D:/HTML_PhanLoai/4_NgayThangAmLich_GioLeTet/181-tinh-ngay-ram-1.html" class="link-item" target="_blank">181-tinh-ngay-ram-1</a>
+            <a href="file:///D:/CASHFLOW/html/phím_tắt.html" class="link-item" target="_blank">phím_tắt</a>
+            <a href="file:///D:/CASHFLOW/html/phim_tat_vs_code.html" class="link-item" target="_blank">phim_tat_vs_code</a>
+            <a href="file:///D:/LICH/phim_tat.html" class="link-item" target="_blank">phim_tat</a>
+            <a href="file:///D:/QUAN_LY_DU_AN/SO_TAY_PHIM_TAT.html" class="link-item" target="_blank">SO_TAY_PHIM_TAT</a>
+            <a href="file:///D:/PROMPT/prompt_hub.html" class="link-item" target="_blank">prompt_hub</a>
+            <a href="file:///D:/HTML_PhanLoai/6_SachThuoc_YHCT" class="link-item" target="_blank">6_SachThuoc_YHCT</a>
+            <a href="file:///D:/HTML_PhanLoai/5_BatQuai_CacLucLuong" class="link-item" target="_blank">5_BatQuai_CacLucLuong</a>
+            <a href="file:///D:/HTML_PhanLoai/4_NgayThangAmLich_GioLeTet" class="link-item" target="_blank">4_NgayThangAmLich_GioLeTet</a>
+            <a href="file:///D:/HTML_PhanLoai/3_TietKhi_CungHoangDao" class="link-item" target="_blank">3_TietKhi_CungHoangDao</a>
+            <a href="file:///D:/HTML_PhanLoai/2_AmDuong_NguHanh" class="link-item" target="_blank">2_AmDuong_NguHanh</a>
+            <a href="file:///D:/HTML_PhanLoai/1_ThoiTiet_NhietDo_ThapDinhDuong" class="link-item" target="_blank">1_ThoiTiet_NhietDo_ThapDinhDuong</a>
+            <a href="file:///D:/HTML_PhanLoai/ChuaPhanLoai" class="link-item" target="_blank">ChuaPhanLoai</a>
+            <a href="file:///D:/TIM BENH/TIM_BENH.pyw" class="link-item" target="_blank">TIM_BENH</a>
+            <a href="file:///D:/TIM BENH/tim_cau_trong_phim.py" class="link-item" target="_blank">tim_cau_trong_phim</a>
+            <a href="file:///D:/HTML/github_data/022-tiet-kiem-tien-chat-gpt.html" class="link-item" target="_blank">022-tiet-kiem-tien-chat-gpt</a>
+            <a href="file:///D:/HTML/github_data/019-chon-mau-xe-may-ien.html" class="link-item" target="_blank">019-chon-mau-xe-may-ien</a>
+            <a href="file:///D:/HTML/github_data/085-ngu-hanh-chua-benh.html" class="link-item" target="_blank">085-ngu-hanh-chua-benh</a>
+            <a href="file:///D:/HTML/github_data/121-tu-trang-phuc.html" class="link-item" target="_blank">121-tu-trang-phuc</a>
+            <a href="file:///D:/HTML/github_data/155-chon-mau-trang-phuc.html" class="link-item" target="_blank">155-chon-mau-trang-phuc</a>
+            <a href="file:///D:/HTML/github_data/303-tra-mau-quan-ao-ma.html" class="link-item" target="_blank">303-tra-mau-quan-ao-ma</a>
+            <a href="file:///D:/HTML/github_data/307-mau-sac-101-150.html" class="link-item" target="_blank">307-mau-sac-101-150</a>
+            <a href="file:///D:/HTML/github_data/309-mau-sac-201-255.html" class="link-item" target="_blank">309-mau-sac-201-255</a>
+            <a href="file:///D:/HTML/github_data/310-mau-sac-trang-phuc.html" class="link-item" target="_blank">310-mau-sac-trang-phuc</a>
+            <a href="file:///D:/HTML/github_data/314-mau-sac-qa.html" class="link-item" target="_blank">314-mau-sac-qa</a>
+            <a href="file:///D:/HTML/github_data/320-tu-trang-phuc.html" class="link-item" target="_blank">320-tu-trang-phuc</a>
+            <a href="file:///D:/QUAN_LY_DU_AN/tu_lanh.html" class="link-item" target="_blank">🍎 Quản Lý Tủ Lạnh</a>
+        </div>
+    </div>
+    <script>
+        function filter(){
+            let v = document.getElementById('search').value.toLowerCase();
+            let items = document.getElementsByClassName('link-item');
+            for(let i of items){
+                i.style.display = i.innerText.toLowerCase().includes(v) ? "" : "none";
+            }
+        }
+    </script>
+</body>
+</html>

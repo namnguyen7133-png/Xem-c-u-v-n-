@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Sổ Tay Phím Tắt - Nam</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #2563eb; }
+        .tabs { display: flex; justify-content: center; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
+        .tab { padding: 12px 24px; background: white; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .tab.active { background: #2563eb; color: white; border-color: #2563eb; }
+        .content { display: none; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .content.active { display: block; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: #2563eb; color: white; }
+        kbd { background: #e2e8f0; padding: 4px 8px; border-radius: 6px; font-family: monospace; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<h1>📖 SỔ TAY PHÍM TẮT CỦA NAM</h1>
+
+<div class="tabs">
+    <div class="tab active" onclick="showTab(0)">🔑 Phím Tắt Quick Open</div>
+    <div class="tab" onclick="showTab(1)">⚡ Phím Tắt Windows & Dev</div>
+    <div class="tab" onclick="showTab(2)">💻 VS Code & Lệnh Chạy</div>
+</div>
+
+<!-- Tab 1: Quick Open -->
+<div class="content active" id="tab0">
+    <h2>Phím Tắt Tùy Chỉnh (Ctrl + Alt + ...)</h2>
+    <table id="quickTable">
+        <tr><th>Phím tắt</th><th>Tên File</th></tr>
+    </table>
+</div>
+
+<!-- Tab 2 & 3 giữ nguyên từ trước -->
+<div class="content" id="tab1">... (các phím tắt Windows, PowerToys...)</div>
+<div class="content" id="tab2">... (VS Code, lệnh chạy file...)</div>
+
+<script>
+function showTab(n) {
+    document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===n));
+    document.querySelectorAll('.content').forEach((c,i) => c.classList.toggle('active', i===n));
+}
+</script>
+
+</body>
+</html>

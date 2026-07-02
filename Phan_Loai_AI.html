@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bảng Phân Loại Dữ Liệu AI</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: #1e293b; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; width: 450px; }
+        h2 { color: #38bdf8; margin-bottom: 10px; }
+        .desc { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
+        button { background: #0284c7; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; transition: 0.2s; }
+        button:hover { background: #0369a1; }
+        .rule { text-align: left; background: #0f172a; padding: 15px; border-radius: 8px; margin-top: 25px; font-size: 13px; line-height: 1.6; color: #cbd5e1; }
+    </style>
+    <script>
+        function chayPhanLoai() {
+            // Kích hoạt file bat để chạy ngầm file python
+            window.location.href = "kich_hoat.bat";
+            alert("Hệ thống đang tiến hành phân loại ngầm! Vui lòng kiểm tra cửa sổ đen xuất hiện.");
+        }
+    </script>
+</head>
+<body>
+    <div class="box">
+        <h2>🗂️ Trạm Phân Loại & Đẩy File Lên Drive</h2>
+        <div class="desc">Giải phóng ổ đĩa bị báo đỏ - Giữ lại mã nguồn Python</div>
+        
+        <button onclick="chayPhanLoai()">⚡ BẮT ĐẦU PHÂN LOẠI FILE</button>
+        
+        <div class="rule">
+            💡 <b>Luật phân loại thông minh:</b><br>
+            • <b>File Database (.db, .sql) & File nén:</b> Tự động CẮT và CHUYỂN thẳng lên Google Drive (Xóa sạch dưới máy để trống ổ đĩa).<br>
+            • <b>File Python (.py, .bat):</b> Chỉ COPY lên Drive để sao lưu, <b>vẫn giữ lại bản gốc dưới máy</b> để bạn chạy bình thường.
+        </div>
+    </div>
+</body>
+</html>

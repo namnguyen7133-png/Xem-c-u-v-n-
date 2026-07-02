@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trạm Điều Khiển Ollama & Open WebUI</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 400px; }
+        h2 { color: #1e293b; margin-bottom: 20px; }
+        button { background: #2563eb; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; width: 100%; margin: 10px 0; transition: 0.3s; font-weight: bold; }
+        button:hover { background: #1d4ed8; }
+        .btn-status { background: #10b981; }
+        .btn-status:hover { background: #059669; }
+        .note { font-size: 13px; color: #64748b; margin-top: 15px; line-height: 1.5; }
+    </style>
+    <script>
+        // Hàm phát tiếng bíp thông báo bằng tần số loa máy tính (Không cần file mp3)
+        function playBeep(frequency, duration) {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = context.createOscillator();
+            const gainNode = context.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.value = frequency;
+            gainNode.gain.setValueAtTime(0.1, context.currentTime);
+            oscillator.connect(gainNode);
+            gainNode.connect(context.destination);
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), duration);
+        }
+
+        function batAI() {
+            // Phát 1 tiếng bíp ngắn báo hiệu bắt đầu kích hoạt
+            playBeep(800, 200); 
+            // Gọi tệp lệnh chạy ngầm bằng giao thức local
+            window.location.href = "start_ai.bat";
+            
+            alert("Đang kích hoạt hệ thống! Xin chờ tiếng BÍP báo thành công sau vài giây.");
+        }
+
+        function kiemTraTreo() {
+            // Mở trang WebUI ở tab mới để kiểm tra xem có vào được không
+            window.open("http://localhost:3000", "_blank");
+        }
+    </script>
+</head>
+<body>
+    <div class="card">
+        <h2>🤖 Hệ Thống AI Nội Bộ</h2>
+        <p style="color:#64748b;">Chạy offline - Bảo mật tài liệu</p>
+        
+        <button onclick="batAI()">🚀 BẬT AI & OPEN WEBUI</button>
+        <button class="btn-status" onclick="kiemTraTreo()">🔗 KIỂM TRA TRẠNG THÁI / VÀO CHAT</button>
+        
+        <div class="note">
+            🔊 <b>Tín hiệu âm thanh:</b><br>
+            - 1 tiếng bíp: Đang khởi động.<br>
+            - 2 tiếng bíp liên tiếp: Đã chạy thành công!<br>
+            - Nếu bấm "Kiểm tra" mà quay vòng vòng: Máy đang bị nghẽn/treo Docker.
+        </div>
+    </div>
+</body>
+</html>

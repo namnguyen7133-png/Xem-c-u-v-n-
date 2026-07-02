@@ -1,0 +1,227 @@
+import http.server
+import json
+import os
+import re
+import socketserver
+import urllib.parse
+import webbrowser
+
+PORT = 8000
+FOLDER_PATH = r"D:\HTML"
+
+
+class MyHandler(http.server.SimpleHTTPRequestHandler):
+
+    def do_GET(self):
+        # API Tìm kiếm file HTML trị bệnh
+        if self.path.startswith("/api/search"):
+            parsed_url = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed_url.query)
+            keyword = params.get("keyword", [""])[0].strip().lower()
+
+            results = []
+            if keyword and os.path.exists(FOLDER_PATH):
+                for file_name in os.listdir(FOLDER_PATH):
+                    if file_name.endswith(".html") or file_name.endswith(
+                        ".htm"
+                    ):
+                        file_path = os.path.join(FOLDER_PATH, file_name)
+                        try:
+                            with open(file_path, "r", encoding="utf-8") as f:
+                                content = f.read()
+                            if keyword in content.lower():
+                                clean_text = re.sub(r"<[^>]*>", "", content)
+                                start_idx = clean_text.lower().find(keyword)
+                                preview = clean_text[
+                                    max(0, start_idx - 20) : min(
+                                        len(clean_text), start_idx + 80
+                                    )
+                                ].strip()
+                                results.append(
+                                    {"file_name": file_name, "preview": preview}
+                                )
+                        except:
+                            pass
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(results).encode("utf-8"))
+            return
+
+        # Giao diện chính tích hợp Tủ lạnh và Tìm kiếm
+        if self.path == "/" or self.path == "/index.html":
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+
+            html_content = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Quản Lý Thông Minh - Nhà Nam</title>
+                <style>
+                    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; padding: 20px; color: #2c3e50; display: flex; gap: 20px; justify-content: center; }
+                    .box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); width: 450px; }
+                    .box-large { width: 600px; }
+                    h3 { text-align: center; margin-top: 0; }
+                    .input-group, .fridge-inputs { display: grid; gap: 10px; margin-bottom: 20px; }
+                    .flex-group { display: flex; gap: 10px; }
+                    input { padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 15px; width: -webkit-fill-available; }
+                    button { padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+                    .btn-green { background: #27ae60; color: white; }
+                    .btn-blue { background: #3498db; color: white; }
+                    .btn-orange { background: #e67e22; color: white; }
+                    .btn-del { background: #ff7675; color: white; padding: 5px 10px; font-size: 12px; }
+                    
+                    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+                    th { background: #f8f9fa; }
+                    
+                    .list-item { padding: 8px; background: #fafafa; border-left: 4px solid #3498db; margin-top: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+                    .needed-item { border-left-color: #e74c3c; background: #fdf2f2; color: #c0392b; font-weight: bold; }
+                    .badge { padding: 3px 8px; background: #e74c3c; color: white; border-radius: 10px; font-size: 12px; }
+                </style>
+            </head>
+            <body>
+
+            <div class="box box-large">
+                <h3 style="color: #27ae60;">🍎 Tủ Lạnh Nhà Nam</h3>
+                
+                <div class="fridge-inputs">
+                    <input type="text" id="foodName" placeholder="Tên món ăn (Ví dụ: Thịt bò trị đau lưng)">
+                    <div class="flex-group">
+                        <input type="number" id="foodPrice" placeholder="Giá tiền (VNĐ)">
+                        <input type="date" id="foodExpiry">
+                    </div>
+                    <button class="btn-green" onclick="addFood()">+ Thêm vào Tủ</button>
+                </div>
+
+                <h4>🟢 CÒN TRONG TỦ:</h4>
+                <table>
+                    <thead><tr><th>Tên món</th><th>Giá</th><th>Hết hạn</th><th>Hành động</th></tr></thead>
+                    <tbody id="fridgeBody"></tbody>
+                </table>
+
+                <h4 style="margin-top: 30px; color: #e74c3c;">🔴 CHƯA CÓ / CẦN MUA THÊM: <span class="badge" id="needCount">0</span></h4>
+                <div id="neededList"></div>
+            </div>
+
+            <div class="box">
+                <h3 style="color: #3498db;">🔍 Bộ Lọc Tìm Kiếm Bệnh (D:\\HTML)</h3>
+                <div class="flex-group">
+                    <input type="text" id="keyword" placeholder="Nhập bệnh (Ví dụ: đau lưng)..." onkeyup="if(event.key==='Enter') searchHTML()">
+                    <button class="btn-blue" onclick="searchHTML()">Tìm</button>
+                </div>
+                <div id="status" style="font-size:14px; color: #e67e22; margin-bottom: 10px;">Sẵn sàng...</div>
+                <div id="htmlResults"></div>
+            </div>
+
+            <script>
+                // Lưu trữ dữ liệu tạm thời vào localStorage để không bị mất khi tắt web
+                let currentFoods = JSON.parse(localStorage.getItem('foods') || '[{"name":"Rau ngót (Trị đau lưng)","price":"15000","expiry":"2026-06-30"},{"name":"Thịt bò tươi","price":"120000","expiry":"2026-06-25"}]');
+                let neededFoods = JSON.parse(localStorage.getItem('needed') || '["Gừng tươi (Hết)","Hành lá (Hết)"]');
+
+                window.onload = function() { renderFridge(); renderNeeded(); };
+
+                // Hiển thị món còn
+                function renderFridge() {
+                    const tbody = document.getElementById('fridgeBody');
+                    tbody.innerHTML = '';
+                    currentFoods.forEach((item, index) => {
+                        tbody.innerHTML += `<tr>
+                            <td><b>${item.name}</b></td>
+                            <td>${item.price}đ</td>
+                            <td><small>${item.expiry}</small></td>
+                            <td><button class="btn-del" onclick="eatFood(${index})">Hết món (Xóa)</button></td>
+                        </tr>`;
+                    });
+                    localStorage.setItem('foods', JSON.stringify(currentFoods));
+                }
+
+                // Hiển thị món chưa có / đã hết cần mua
+                function renderNeeded() {
+                    const listDiv = document.getElementById('neededList');
+                    listDiv.innerHTML = '';
+                    document.getElementById('needCount').innerText = neededFoods.length;
+                    neededFoods.forEach((item, index) => {
+                        listDiv.innerHTML += `<div class="list-item needed-item">
+                            <span>❌ ${item}</span>
+                            <button class="btn-green" style="padding:3px 8px; font-size:12px;" onclick="buyFood(${index})">Đã mua lại</button>
+                        </div>`;
+                    });
+                    localStorage.setItem('needed', JSON.stringify(neededFoods));
+                }
+
+                function addFood() {
+                    const name = document.getElementById('foodName').value.trim();
+                    const price = document.getElementById('foodPrice').value.trim();
+                    const expiry = document.getElementById('foodExpiry').value;
+                    if(!name) return;
+                    currentFoods.push({name, price, expiry});
+                    renderFridge();
+                    document.getElementById('foodName').value = '';
+                    document.getElementById('foodPrice').value = '';
+                }
+
+                // Khi ăn hết món, tự động chuyển sang danh sách "Chưa có / Cần mua thêm"
+                function eatFood(index) {
+                    const food = currentFoods[index];
+                    if(!neededFoods.includes(food.name + " (Hết)")) {
+                        neededFoods.push(food.name + " (Hết)");
+                    }
+                    currentFoods.splice(index, 1);
+                    renderFridge();
+                    renderNeeded();
+                }
+
+                // Khi đã mua lại món đó
+                function buyFood(index) {
+                    let cleanName = neededFoods[index].replace(" (Hết)", "");
+                    currentFoods.push({name: cleanName, price: "0", expiry: "Chưa cập nhật"});
+                    neededFoods.splice(index, 1);
+                    renderFridge();
+                    renderNeeded();
+                }
+
+                // Hàm tìm kiếm HTML bệnh nội bộ
+                function searchHTML() {
+                    const kw = document.getElementById('keyword').value.trim();
+                    if(!kw) return;
+                    document.getElementById('status').innerText = 'Đang quét D:\\HTML...';
+                    
+                    fetch('/api/search?keyword=' + encodeURIComponent(kw))
+                        .then(res => res.json())
+                        .then(data => {
+                            const resDiv = document.getElementById('htmlResults');
+                            resDiv.innerHTML = '';
+                            document.getElementById('status').innerText = 'Tìm thấy ' + data.length + ' trang khớp.';
+                            if(data.length === 0) {
+                                resDiv.innerHTML = '<p style="color:red;text-align:center;">Không tìm thấy trang nào chứa chữ này.</p>';
+                                return;
+                            }
+                            data.forEach(item => {
+                                resDiv.innerHTML += `<div class="list-item">
+                                    <div style="max-width:70%;">
+                                        <b style="color:#2c3e50;">📄 ${item.file_name}</b>
+                                        <p style="margin:4px 0 0 0;font-size:13px;color:gray;">...${item.preview}...</p>
+                                    </div>
+                                    <a class="btn-blue" style="text-decoration:none;font-size:13px;" href="file:///D:/HTML/${item.file_name}" target="_blank">Mở Web ➜</a>
+                                </div>`;
+                            });
+                        });
+                }
+            </script>
+            </body>
+            </html>
+            """
+            self.wfile.write(html_content.encode("utf-8"))
+            return
+
+        return http.server.SimpleHTTPRequestHandler.do_GET(self)
+
+
+print(f"Máy chủ Nhà Nam đang chạy tại http://localhost:{PORT}")
+webbrowser.open(f"http://localhost:{PORT}")
+with socketserver.TCPServer(("", PORT), MyHandler) as httpd:
+    httpd.serve_forever()
